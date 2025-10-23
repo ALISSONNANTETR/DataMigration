@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DataMigration": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
