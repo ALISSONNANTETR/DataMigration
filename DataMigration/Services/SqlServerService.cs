@@ -7,22 +7,13 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataMigration.Utils;
 
 namespace DataMigration.Services
 {
     internal class SqlServerService
     {
-        private string connectToSqlServer()
-        {
-            // Build configuration to read from appsettings.json
-            var config = new ConfigurationBuilder()
-                            .SetBasePath(Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"../../../")))
-                            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                            .Build();
-
-            // Connection strings for SQL Server and PostgreSQL
-            return config.GetConnectionString("SqlServer");
-        }
+        DatabaseConnection DatabaseConnection = new DatabaseConnection();
         public void SqlServerImport()
         {
 
@@ -30,13 +21,15 @@ namespace DataMigration.Services
 
         public void SqlServerExport()
         {
+            string sqlServerConnString = DatabaseConnection.databaseConnection("SqlServer");
+            string postgreSqlConnString = "Host=10.1.2.30;Database=default;Username=default;Password=default;";
 
             // Define the table and columns to migrate
             var tableName = "GDIC";
             var columns = new[] { "tabela", "coluna", "descricao" }; // specify your columns here
 
             // Connect to SQL Server
-            using var sqlConn = new SqlConnection(connectToSqlServer());
+            using var sqlConn = new SqlConnection(sqlServerConnString);
             sqlConn.Open();
             Console.WriteLine("Connected to SQL Server.");
 
