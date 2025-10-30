@@ -1,13 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataMigration.Utils
 {
-    internal class DatabaseConnection
+    internal class GetConnectionString
     {
         public string databaseConnection(string sgbd)
         {
@@ -18,7 +13,7 @@ namespace DataMigration.Utils
                             .Build();
 
             // Connection strings for SQL Server and PostgreSQL
-            return config.GetConnectionString($"{sgbd}");
+            return config.GetConnectionString(sgbd);
         }
     }
 }

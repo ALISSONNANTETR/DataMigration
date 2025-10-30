@@ -3,6 +3,11 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+DataMigration/appsettings.json
+DataMigration/appsettings.*.json
+
+
+
 # dotenv files
 .env
 

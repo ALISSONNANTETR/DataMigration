@@ -1,63 +1,78 @@
-﻿using System.IO;
-using Microsoft.Extensions.Configuration;
-using Npgsql;
-using System;
-using System.Collections.Generic;
+﻿using Npgsql;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using DataMigration.Utils;
+using System.Data;
 
 namespace DataMigration.Services
 {
     internal class SqlServerService
     {
-        DatabaseConnection DatabaseConnection = new DatabaseConnection();
+        GetConnectionString DatabaseConnection = new GetConnectionString();
         public void SqlServerImport()
         {
 
         }
 
-        public void SqlServerExport()
+        public void SqlServerExport(string tableName, string[] columns)
         {
             string sqlServerConnString = DatabaseConnection.databaseConnection("SqlServer");
-            string postgreSqlConnString = "Host=10.1.2.30;Database=default;Username=default;Password=default;";
+            
 
             // Define the table and columns to migrate
-            var tableName = "GDIC";
-            var columns = new[] { "tabela", "coluna", "descricao" }; // specify your columns here
+            //var tableName = "GDIC";
+            //var columns = new[] { "tabela", "coluna", "descricao" }; // specify your columns here
 
             // Connect to SQL Server
             using var sqlConn = new SqlConnection(sqlServerConnString);
-            sqlConn.Open();
-            Console.WriteLine("Connected to SQL Server.");
+            try
+            {
+                sqlConn.Open();
+                Console.WriteLine("Connected to SQL Server.");
+            }catch (Exception ex)
+            {
+                Console.WriteLine($"Error connecting to SQL Server: {ex.Message}");
+                return;
+            }
 
             // Read data from SQL Server
             var query = $"SELECT {string.Join(", ", columns)} FROM {tableName}";
             using var sqlCmd = new SqlCommand(query, sqlConn);
             using var reader = sqlCmd.ExecuteReader();
 
-            // Connect to PostgreSQL
-            using var pgConn = new NpgsqlConnection(postgreSqlConnString);
-            pgConn.Open();
-            Console.WriteLine("Connected to PostgreSQL.");
 
-            // Prepare COPY command for PostgreSQL
-            using var importer = pgConn.BeginBinaryImport($"COPY {tableName} ({string.Join(", ", columns)}) FROM STDIN (FORMAT BINARY)");
+        }
 
-            // Migrate data from SQL Server to PostgreSQL
-            while (reader.Read())
+        public void SqlServerColumns(string table)
+        {
+            string sqlServerConnString = DatabaseConnection.databaseConnection("SqlServer");
+
+            // Connect to SQL Server
+            using var sqlConn = new SqlConnection(sqlServerConnString);
+            try
             {
-                importer.StartRow();
-                for (int i = 0; i < columns.Length; i++)
-                {
-                    importer.Write(reader.GetValue(i)); // Write each column value
-                }
+                sqlConn.Open();
+                Console.WriteLine("Connected to SQL Server.\n");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error connecting to SQL Server: {ex.Message}");
+                return;
             }
 
-            importer.Complete();
-            Console.WriteLine("Data migration completed successfully.");
+            // Read data from SQL Server
+            var query = $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}'";
+
+            using var sqlCmd = new SqlCommand(query, sqlConn);
+            using (SqlDataReader reader = sqlCmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    Console.WriteLine(String.Format("{0}",reader[0]));
+                }
+            }
+            Console.WriteLine("\n");
+
         }
 
     }

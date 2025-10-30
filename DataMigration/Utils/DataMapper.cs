@@ -8,5 +8,12 @@ namespace DataMigration.Utils
 {
     internal class DataMapper
     {
+        public DataMapper(string dataEx, string dataIn)
+        {
+        
+
+
+        }
+
     }
 }
