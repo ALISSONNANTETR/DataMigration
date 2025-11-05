@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DataMigration.Utils
 {
-    internal class DataMapper
+    internal class DataTableHelper
     {
-        public DataMapper(string dataEx, string dataIn)
+        public DataTableHelper(string dataEx, string dataIn)
         {
         
 

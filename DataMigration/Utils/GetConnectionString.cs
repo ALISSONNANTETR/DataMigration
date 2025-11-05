@@ -9,7 +9,7 @@ namespace DataMigration.Utils
             // Build configuration to read from appsettings.json
             var config = new ConfigurationBuilder()
                             .SetBasePath(Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"../../../")))
-                            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                            .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
                             .Build();
 
             // Connection strings for SQL Server and PostgreSQL
